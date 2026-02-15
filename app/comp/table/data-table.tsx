@@ -15,16 +15,18 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  onSelectedRowsChange?: (rows: TData[]) => void;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  onSelectedRowsChange,
 }: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = useState({});
 
@@ -44,6 +46,13 @@ export function DataTable<TData, TValue>({
     .rows.map((row) => row.original);
 
   console.log(selectedData);
+
+  useEffect(() => {
+    const selectedData = table
+      .getSelectedRowModel()
+      .rows.map((row) => row.original);
+    onSelectedRowsChange?.(selectedData);
+  }, [rowSelection, table, onSelectedRowsChange]);
 
   return (
     <div className="overflow-hidden rounded-md border">
